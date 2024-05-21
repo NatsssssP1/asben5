@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(to right, #007bff, #00d4ff); /* Mengubah warna background */
+            background: linear-gradient(to right, #007bff, #00d4ff);
             color: #fff;
             display: flex;
             justify-content: center;
@@ -65,7 +65,7 @@
             font-size: 14px;
         }
         .meeting button {
-            background: #007bff; /* Mengubah warna tombol */
+            background: #007bff;
             color: #fff;
             cursor: pointer;
             transition: background 0.3s ease;
@@ -75,13 +75,35 @@
             cursor: not-allowed;
         }
         .meeting button:hover:not(:disabled) {
-            background: #00d4ff; /* Mengubah warna tombol saat dihover */
+            background: #00d4ff;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Absensi Pertemuan</h1>
+        <div class="form-group">
+            <label for="nama">Nama:</label>
+            <input type="text" id="nama" name="nama">
+        </div>
+        <div class="form-group">
+            <label for="nim">NIM:</label>
+            <input type="text" id="nim" name="nim">
+        </div>
         <div class="progress">
             <div class="progress-bar" id="progress-bar"></div>
         </div>
@@ -95,8 +117,22 @@
             const totalMeetings = 16;
             const container = document.getElementById('meetings');
             const progressBar = document.getElementById('progress-bar');
+            const namaInput = document.getElementById('nama');
+            const nimInput = document.getElementById('nim');
+
+            // Load nama and nim from localStorage
+            namaInput.value = localStorage.getItem('nama') || '';
+            nimInput.value = localStorage.getItem('nim') || '';
 
             let absensi = JSON.parse(localStorage.getItem('absensi')) || Array(totalMeetings).fill(null);
+
+            // Save nama and nim to localStorage on change
+            namaInput.addEventListener('input', () => {
+                localStorage.setItem('nama', namaInput.value);
+            });
+            nimInput.addEventListener('input', () => {
+                localStorage.setItem('nim', nimInput.value);
+            });
 
             const updateProgress = () => {
                 const completed = absensi.filter(status => status !== null).length;
