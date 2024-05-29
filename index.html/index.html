@@ -113,76 +113,76 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const totalMeetings = 16;
-            const container = document.getElementById('meetings');
-            const progressBar = document.getElementById('progress-bar');
-            const namaInput = document.getElementById('nama');
-            const nimInput = document.getElementById('nim');
+document.addEventListener('DOMContentLoaded', () => {
+    const totalMeetings = 16;
+    const container = document.getElementById('meetings');
+    const progressBar = document.getElementById('progress-bar');
+    const namaInput = document.getElementById('nama');
+    const nimInput = document.getElementById('nim');
 
-            // Load nama and nim from localStorage
-            namaInput.value = localStorage.getItem('nama') || '';
-            nimInput.value = localStorage.getItem('nim') || '';
+    // Load nama and nim from localStorage
+    namaInput.value = localStorage.getItem('nama_sistem_politik') || '';
+    nimInput.value = localStorage.getItem('nim_sistem_politik') || '';
 
-            let absensi = JSON.parse(localStorage.getItem('absensi')) || Array(totalMeetings).fill(null);
+    let absensi = JSON.parse(localStorage.getItem('absensi_sistem_politik')) || Array(totalMeetings).fill(null);
 
-            // Save nama and nim to localStorage on change
-            namaInput.addEventListener('input', () => {
-                localStorage.setItem('nama', namaInput.value);
+    // Save nama and nim to localStorage on change
+    namaInput.addEventListener('input', () => {
+        localStorage.setItem('nama_sistem_politik', namaInput.value);
+    });
+    nimInput.addEventListener('input', () => {
+        localStorage.setItem('nim_sistem_politik', nimInput.value);
+    });
+
+    const updateProgress = () => {
+        const completed = absensi.filter(status => status !== null).length;
+        const progress = (completed / totalMeetings) * 100;
+        progressBar.style.width = progress + '%';
+    };
+
+    const markAttendance = (index) => {
+        const selectElement = document.getElementById(`select-${index}`);
+        const status = selectElement.value;
+        absensi[index] = status;
+        localStorage.setItem('absensi_sistem_politik', JSON.stringify(absensi));
+        renderMeetings();
+        updateProgress();
+    };
+
+    const renderMeetings = () => {
+        container.innerHTML = '';
+        absensi.forEach((status, index) => {
+            const meetingDiv = document.createElement('div');
+            meetingDiv.classList.add('meeting');
+            const meetingText = document.createElement('span');
+            meetingText.textContent = `Pertemuan ${index + 1}`;
+            const selectElement = document.createElement('select');
+            selectElement.id = `select-${index}`;
+            selectElement.disabled = status !== null;
+            ['Hadir', 'Izin', 'Absen'].forEach((label) => {
+                const option = document.createElement('option');
+                option.value = label;
+                option.textContent = label;
+                if (status === label) {
+                    option.selected = true;
+                }
+                selectElement.appendChild(option);
             });
-            nimInput.addEventListener('input', () => {
-                localStorage.setItem('nim', nimInput.value);
-            });
+            const submitButton = document.createElement('button');
+            submitButton.textContent = 'Submit';
+            submitButton.disabled = status !== null;
+            submitButton.onclick = () => markAttendance(index);
 
-            const updateProgress = () => {
-                const completed = absensi.filter(status => status !== null).length;
-                const progress = (completed / totalMeetings) * 100;
-                progressBar.style.width = progress + '%';
-            };
-
-            const markAttendance = (index) => {
-                const selectElement = document.getElementById(`select-${index}`);
-                const status = selectElement.value;
-                absensi[index] = status;
-                localStorage.setItem('absensi', JSON.stringify(absensi));
-                renderMeetings();
-                updateProgress();
-            };
-
-            const renderMeetings = () => {
-                container.innerHTML = '';
-                absensi.forEach((status, index) => {
-                    const meetingDiv = document.createElement('div');
-                    meetingDiv.classList.add('meeting');
-                    const meetingText = document.createElement('span');
-                    meetingText.textContent = `Pertemuan ${index + 1}`;
-                    const selectElement = document.createElement('select');
-                    selectElement.id = `select-${index}`;
-                    selectElement.disabled = status !== null;
-                    ['Hadir', 'Izin', 'Absen'].forEach((label) => {
-                        const option = document.createElement('option');
-                        option.value = label;
-                        option.textContent = label;
-                        if (status === label) {
-                            option.selected = true;
-                        }
-                        selectElement.appendChild(option);
-                    });
-                    const submitButton = document.createElement('button');
-                    submitButton.textContent = 'Submit';
-                    submitButton.disabled = status !== null;
-                    submitButton.onclick = () => markAttendance(index);
-                    
-                    meetingDiv.appendChild(meetingText);
-                    meetingDiv.appendChild(selectElement);
-                    meetingDiv.appendChild(submitButton);
-                    container.appendChild(meetingDiv);
-                });
-            };
-
-            renderMeetings();
-            updateProgress();
+            meetingDiv.appendChild(meetingText);
+            meetingDiv.appendChild(selectElement);
+            meetingDiv.appendChild(submitButton);
+            container.appendChild(meetingDiv);
         });
+    };
+
+    renderMeetings();
+    updateProgress();
+});
     </script>
 </body>
 </html>
